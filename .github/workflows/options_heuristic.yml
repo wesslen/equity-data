@@ -3,7 +3,7 @@ name: Generate Options Heuristic
 
 on:
   schedule:
-    - cron: '30 13 * * 1-5'  # 9:30 AM ET (1:30 PM UTC) Mon-Fri
+    - cron: '0 11 * * 1-5'  # 6:00 AM EST (11:00 AM UTC) Mon-Fri
   push:
     paths:
       - 'data/stock_symbols.txt'
