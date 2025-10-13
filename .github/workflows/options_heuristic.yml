@@ -1,0 +1,41 @@
+# .github/workflows/options_heuristic.yml
+name: Generate Options Heuristic
+
+on:
+  schedule:
+    - cron: '30 13 * * 1-5'  # 9:30 AM ET (1:30 PM UTC) Mon-Fri
+  push:
+    paths:
+      - 'data/stock_symbols.txt'
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  generate-heuristic:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      
+      - name: Generate options heuristic
+        run: |
+          python scripts/generate_options_heuristic.py
+      
+      - name: Commit and push results
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add output/*.csv data/historical_prices.json
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update options heuristic $(date +'%Y-%m-%d')"
+          git push
